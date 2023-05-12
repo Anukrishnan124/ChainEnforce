@@ -1,21 +1,28 @@
-import { Typography } from '@mui/material';
-import './App.css';
-import Appbar from './components/Appbar';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
-import LoginPage from './pages/LoginPage';
+import { Typography } from "@mui/material";
+import "./App.css";
+import { BrowserRouter as Router, Route, Routes, Navigate  } from "react-router-dom";
+import { useState } from "react";
+
+import Appbar from "./components/Appbar";
+import LoginPage from "./pages/LoginPage";
+import Home from "./pages/Home";
+import RegisterGrievance from "./pages/RegisterGrievance";
 
 function App() {
   const [wallet, setWallet] = useState("");
+  console.log({wallet})
   return (
-    <div className="App">
-      <Appbar />
-      <Router>
+    <Router>
+      <div className="App">
+        <Appbar wallet={wallet} setWallet={setWallet} />
         <Routes>
-          <Route path='/login' element={<LoginPage/>}/>
+          <Route path="/login" element={<LoginPage setWallet={setWallet} />} />
+          <Route path="/register-grievance" element={<RegisterGrievance wallet={wallet} setWallet={setWallet} />} />
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Navigate to={'/'} replace />}  />
         </Routes>
-      </Router>
-    </div>
+      </div>
+    </Router>
   );
 }
 
