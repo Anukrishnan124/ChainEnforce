@@ -15,6 +15,7 @@ export default function BasicDatePicker({ onChange, value, disabled }) {
           sx={{ width: "223px" }}
           format="DD-MM-YYYY"
           label="DOB"
+          value={value}
           disabled={disabled}
           onChange={handleChange}
         />

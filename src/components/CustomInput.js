@@ -47,6 +47,7 @@ const CustomInput = ({
       {isText ? (
         <TextField
           label={label}
+          value={value}
           placeholder={placeholder}
           onChange={handleChange}
           disabled={disabled}
@@ -69,6 +70,7 @@ const CustomInput = ({
           rows={4}
           placeholder={placeholder}
           sx={{ width: "223px" }}
+          value={value}
           onChange={handleChange}
           disabled={disabled}
         />

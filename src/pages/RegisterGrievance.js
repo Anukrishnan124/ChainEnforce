@@ -4,10 +4,8 @@ import CustomInput from "../components/CustomInput";
 import Title from "../data/ComplaintTitle";
 import Districts from "../data/ListOfDistrict";
 import PoliceStations from "../data/ListOfPoliceStation";
-import dayjs from "dayjs";
 import { UploadGrievance } from "../functions/ContractInteractions";
 import uniqid from "uniqid";
-import Swal from "sweetalert2";
 import GetHash from "../functions/Hash";
 import UploadFile from "../functions/FirebaseInterations";
 import ConnectWallet from "../functions/ConnectWallet";
@@ -17,7 +15,7 @@ const RegisterGrievance = ({ wallet, setWallet }) => {
   const [id, setId] = useState(uniqid());
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState(dayjs("2022-04-17"));
+  const [dob, setDob] = useState(null);
   const [address, setAddress] = useState("");
   const [title, setTitle] = useState("");
   const [grievance, setGrievance] = useState("");
@@ -29,6 +27,7 @@ const RegisterGrievance = ({ wallet, setWallet }) => {
   const [applicationHash, setApplicationHash] = useState("");
   const [identityUrl, setIdentityUrl] = useState("");
   const [appUrl, setAppUrl] = useState("");
+  const [complete, setComplete] = useState(false);
 
   const handleSubmit = () => {
     UploadFile("Identities", identityHash, identity, setIdentityUrl);
@@ -56,16 +55,38 @@ const RegisterGrievance = ({ wallet, setWallet }) => {
         grievance,
         policeStation,
         identityUrl,
-        appUrl
+        appUrl,
+        setComplete
       );
     }
   }, [identityUrl, appUrl]);
 
   useEffect(() => {
-    if(wallet) {
+    if (wallet) {
       setDisabled(false);
     }
-  }, [wallet])
+  }, [wallet]);
+
+  useEffect(() => {
+    if (complete) {
+      setId(uniqid());
+      setName("");
+      setPhone("");
+      setDob(null);
+      setAddress("");
+      setTitle("");
+      setGrievance("");
+      setDistrict("");
+      setPoliceStation("");
+      setIdentity(null);
+      setApplicationPic(null);
+      setIdentityHash("");
+      setApplicationHash("");
+      setIdentityUrl("");
+      setAppUrl("");
+      setComplete(false);
+    }
+  }, [complete]);
 
   return (
     <>
@@ -106,6 +127,7 @@ const RegisterGrievance = ({ wallet, setWallet }) => {
             isText={true}
             label={"Name"}
             placeholder={"Name"}
+            value={name}
             onChange={setName}
             disabled={disable}
           />
@@ -130,6 +152,7 @@ const RegisterGrievance = ({ wallet, setWallet }) => {
             isMultiLine={true}
             label={"Address"}
             placeholder={"Address"}
+            value={address}
             onChange={setAddress}
             disabled={disable}
           />
@@ -155,6 +178,7 @@ const RegisterGrievance = ({ wallet, setWallet }) => {
             title={"Enter your Grievance Description:"}
             isMultiLine={true}
             label={"Grievance"}
+            value={grievance}
             placeholder={"Grievance"}
             onChange={setGrievance}
             disabled={disable}

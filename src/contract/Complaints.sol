@@ -145,6 +145,31 @@ contract ComplaintRegistration {
         view
         returns (Complaint memory)
     {
+        require(isAdmin(msg.sender), "Only admins can execute this function");
         return Complaints[_id];
     }
+
+    function viewComplaint(string memory _id)
+        public
+        view
+        returns (
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            bool
+        )
+    {
+        Complaint storage complaint = Complaints[_id];
+        return (
+            complaint.id,
+            complaint.name,
+            complaint.title,
+            complaint.description,
+            complaint.message,
+            complaint.status
+        );
+    }
 }
+lhkcwk6z
