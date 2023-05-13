@@ -1,30 +1,25 @@
 import { Button, Stack } from "@mui/material";
-import Appbar from "../components/Appbar";
-import detectEthereumProvider from '@metamask/detect-provider'
-import Swal from 'sweetalert2'
 import ConnectWallet from "../functions/ConnectWallet";
-
 
 const LoginPage = ({setWallet}) => {
   return (
     <>
-      {/* <Appbar showLogin={false} /> */}
       <Stack
         sx={{
           width: "300px",
-          height: "500px",
+          height: "400px",
           backgroundColor: "white",
           borderRadius: "20px",
           mx: "auto",
-          mt: "calc((100vh - 500px)/2)",
+          mt: "calc((100vh - 64px)/2 - 200px)",
         }}
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <Button variant="contained" sx={{ width: "90%" }} onClick={() => {
+        <Button variant="contained"  onClick={() => {
           ConnectWallet(setWallet)
         }}>
-          Connect metamask wallet
+          Connect wallet
         </Button>
       </Stack>
     </>

@@ -7,54 +7,52 @@ import { Divider, Stack } from "@mui/material";
 import { useState } from "react";
 import { viewComplaint } from "../functions/ContractInteractions";
 
-const ViewComplaints = ({
-  expanded,
-  handleChange,
-  id,
-}) => {
+const ViewComplaints = ({ expanded, handleChange, id }) => {
   const [details, setDetails] = useState([]);
 
   const handleClick = () => {
-    viewComplaint(id, setDetails)
-  }
+    viewComplaint(id, setDetails);
+  };
 
   return (
-    <Stack sx={{ width: "70vw", mx: "auto", mt: 2 }}>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1bh-content"
-          id="panel1bh-header"
-          onClick={handleClick}
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1bh-content"
+        id="panel1bh-header"
+        onClick={handleClick}
+      >
+        <Typography sx={{ width: "33%", flexShrink: 0 }}>
+          Application id: {id}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Typography>{details[2]}</Typography>
+        <Typography textAlign={"left"}>Complaint description: </Typography>
+        <Typography>{details[3]}</Typography>
+        <Divider sx={{ mt: 2 }} />
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          sx={{ mt: 2 }}
         >
-          <Typography sx={{ width: "33%", flexShrink: 0 }}>
-            Application id: {id}
+          <Typography>
+            Application Status:
+            <br />
+            {details[5]
+              ? "Accepted"
+              : !details[4]
+              ? "Under Verification"
+              : "Rejected"}
           </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography >{details[2]}</Typography>
-          <Typography textAlign={"left"}>Complaint description: </Typography>
-          <Typography>{details[3]}</Typography>
-          <Divider sx={{ mt: 2 }} />
-          <Stack
-            direction={"row"}
-            justifyContent={"space-between"}
-            sx={{ mt: 2 }}
-          >
-            <Typography>
-              Application Status:
-              <br />
-              {details[5] ? "Accepted" : !details[4] ? "Under Verification" : "Rejected"}
-            </Typography>
-            <Typography>
-              Updates:
-              <br />
-              {details[4]}
-            </Typography>
-          </Stack>
-        </AccordionDetails>
-      </Accordion>
-    </Stack>
+          <Typography>
+            Updates:
+            <br />
+            {details[4]}
+          </Typography>
+        </Stack>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 

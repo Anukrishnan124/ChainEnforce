@@ -1,5 +1,5 @@
-import { Stack, Button, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Stack, Button, Typography, Accordion } from "@mui/material";
+import { useState } from "react";
 import { getApplicationIds } from "../functions/ContractInteractions";
 
 import ViewComplaints from "../components/ViewComplaint";
@@ -22,24 +22,19 @@ const ViewStatus = () => {
           alignItems={"center"}
           justifyContent={"center"}
         >
-          <Button
-            variant="contained"
-            sx={{ mt: 2 }}
-            onClick={() => getApplicationIds(setIds)}
-          >
+          <Button variant="contained" onClick={() => getApplicationIds(setIds)}>
             Connect Wallet
           </Button>
         </Stack>
       ) : null}
       {ids ? (
-        <Stack sx={{mt: 5}}>
+        <Stack sx={{ mt: 5 }}>
           <Typography>Your Complaints</Typography>
-          {ids.map((data, index) => (
-            <ViewComplaints
-              key={index}
-              id={data}
-            />
-          ))}
+          <Stack sx={{ width: "70vw", mx: "auto", mt: 2 }}>
+            {ids.map((data, index) => (
+              <ViewComplaints key={index} id={data} />
+            ))}
+          </Stack>
         </Stack>
       ) : null}
     </>
