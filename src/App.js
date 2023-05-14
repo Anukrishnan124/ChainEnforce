@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -16,6 +15,8 @@ import ViewStatus from "./pages/ViewStatus";
 import OwnerPage from "./pages/OwnerPage";
 import AddAdmin from "./components/AddAdmin";
 import Welcome from "./components/AdminWelcome";
+import AdminPage from "./pages/AdminPage";
+import AdminDashboard from "./components/AdminDashboard";
 
 const OWNER = process.env.REACT_APP_OWNER_ADDR;
 const CYBER_ADMIN = process.env.REACT_APP_CYBER_ADDR;
@@ -36,8 +37,12 @@ function App() {
             element={
               wallet === OWNER ? (
                 <Navigate to={"/owner-dashboard"} replace />
+              ) : wallet === CYBER_ADMIN ? (
+                <Navigate to={"/cybercrime-admin-dashboard"} replace />
+              ) : wallet === THEFT_ADMIN ? (
+                <Navigate to={"/theft-admin-dashboard"} replace />
               ) : (
-                <LoginPage setWallet={setWallet} />
+                <LoginPage wallet={wallet} setWallet={setWallet} />
               )
             }
           />
@@ -48,7 +53,10 @@ function App() {
             }
           />
           <Route path="/" element={<Home />} />
-          <Route path="/view-status" element={<ViewStatus />} />
+          <Route
+            path="/view-status"
+            element={<ViewStatus wallet={wallet} setWallet={setWallet} />}
+          />
           <Route
             path="owner-dashboard"
             element={
@@ -60,15 +68,37 @@ function App() {
             }
           >
             <Route index element={<Welcome />} />
+            <Route path={"add-super-admin"} element={<AddAdmin />} />
             <Route path={"add-cybercrime-admin"} element={<AddAdmin />} />
             <Route path={"add-theft-admin"} element={<AddAdmin />} />
             <Route path={"add-drug-admin"} element={<AddAdmin />} />
             <Route path={"add-others-admin"} element={<AddAdmin />} />
           </Route>
+          <Route
+            path="/cybercrime-admin-dashboard"
+            element={
+              wallet ? (
+                <AdminPage wallet={wallet} />
+              ) : (
+                <Navigate to={"/login"} replace />
+              )
+            }
+          />
+          <Route
+            path="/theft-admin-dashboard"
+            element={
+              wallet ? (
+                <AdminPage wallet={wallet} />
+              ) : (
+                <Navigate to={"/login"} replace />
+              )
+            }
+          />
           <Route path="*" element={<Navigate to={"/"} replace />} />
         </Routes>
       </div>
     </Router>
   );
 }
+
 export default App;

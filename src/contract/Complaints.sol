@@ -4,34 +4,37 @@ pragma solidity >=0.8.2 <0.9.0;
 
 contract ComplaintRegistration {
     address owner;
-    address cyberCrimeAdmin;
+    address superAdmin;
+    address cyberAdmin;
     address theftAdmin;
     address drugAdmin;
-    address otherAdmin;
+    address othersAdmin;
+    uint256 threshold;
     string[] idArray;
 
     struct Complaint {
-        string id;
-        uint256 complaintType;
+        address user;
+        uint256 complaintType; // 1 - cybercrime, 2 - theft, 3 - drug, 4 - others
         string name;
+        string email;
         uint256 phone;
-        string dob;
+        uint256 dob;
         string addr;
-        string title;
         string description;
         string nearestPoliceStation;
         string proof;
         string attachment;
         string message;
+        uint256 timestamp;
         bool status;
     }
 
-    mapping(address => string[]) UserComplaints;
     mapping(string => Complaint) Complaints;
-    mapping(address => uint256[]) complaintStatus;
+    mapping(address => string[]) UserComplaints;
 
     constructor() {
         owner = msg.sender;
+        threshold = 1;
     }
 
     modifier onlyOwner() {
@@ -39,30 +42,53 @@ contract ComplaintRegistration {
         _;
     }
 
-    function addCyberCrimeAdmin(address admin) public onlyOwner {
-        cyberCrimeAdmin = admin;
+    modifier onlySuperAdmin() {
+        require(
+            msg.sender == superAdmin,
+            "Only super admin can execute this function"
+        );
+        _;
     }
 
-    function addTheftAdmin(address admin) public onlyOwner {
-        theftAdmin = admin;
+    function setThreshold(uint256 x) public onlySuperAdmin {
+        threshold = x;
     }
 
-    function addDrugAdmin(address admin) public onlyOwner {
-        drugAdmin = admin;
+    function addAdmin(address admin, uint256 accType) public onlyOwner {
+        if (accType == 1) {
+            superAdmin = admin;
+        } else if (accType == 2) {
+            cyberAdmin = admin;
+        } else if (accType == 3) {
+            theftAdmin = admin;
+        } else if (accType == 4) {
+            drugAdmin = admin;
+        } else if (accType == 5) {
+            othersAdmin == admin;
+        }
     }
 
-    function addOtherAdmin(address admin) public onlyOwner {
-        otherAdmin = admin;
+    function isAdmin(address admin) private view returns (bool) {
+        if (
+            admin == superAdmin ||
+            admin == cyberAdmin ||
+            admin == theftAdmin ||
+            admin == drugAdmin ||
+            admin == othersAdmin
+        ) {
+            return true;
+        }
+        return false;
     }
 
     function addComplaint(
         string memory _id,
         uint256 _complaintType,
         string memory _name,
+        string memory _email,
         uint256 _phone,
-        string memory _dob,
+        uint256 _dob,
         string memory _addr,
-        string memory _title,
         string memory _desc,
         string memory _nearestPoliceStation,
         string memory _proof,
@@ -70,48 +96,79 @@ contract ComplaintRegistration {
     ) public {
         string memory _msg = "";
         Complaints[_id] = Complaint(
-            _id,
+            msg.sender,
             _complaintType,
             _name,
+            _email,
             _phone,
             _dob,
             _addr,
-            _title,
             _desc,
             _nearestPoliceStation,
             _proof,
             _attachment,
             _msg,
+            block.timestamp,
             false
         );
         UserComplaints[msg.sender].push(_id);
         idArray.push(_id);
     }
 
-    function checkComplaintStatus() public view returns (string[] memory) {
-        return UserComplaints[msg.sender];
-    }
+    function getExpiredComplaints()
+        public
+        view
+        onlySuperAdmin
+        returns (string[] memory)
+    {
+        // require(
+        //     msg.sender == superAdmin,
+        //     "Only super admin can execute this function"
+        // );
 
-    function isAdmin(address admin) private view returns (bool) {
-        if (admin == cyberCrimeAdmin) {
-            return true;
-        } else if (admin == theftAdmin) {
-            return true;
-        } else if (admin == drugAdmin) {
-            return true;
-        } else if (admin == otherAdmin) {
-            return true;
+        string[] memory arr = new string[](idArray.length);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < idArray.length; i++) {
+            if (
+                block.timestamp >
+                Complaints[idArray[i]].timestamp + threshold * 1 days
+            ) {
+                arr[index] = idArray[i];
+                index++;
+            }
         }
-        return false;
+
+        return arr;
     }
 
-    function validateComplaint(string memory _id, bool _status) public {
+    function superAdminAction(
+        string memory _id,
+        string memory _msg,
+        bool _status
+    ) public onlySuperAdmin {
+        require(
+            msg.sender == superAdmin,
+            "Only super admin can execute this function"
+        );
+
+        Complaint storage complaint = Complaints[_id];
+        complaint.message = _msg;
+        complaint.status = _status;
+        complaint.timestamp = block.timestamp;
+    }
+
+    function validateComplaint(
+        string memory _id,
+        bool _status,
+        string memory _msg
+    ) public {
         require(isAdmin(msg.sender), "Only admins can execute this function");
         Complaints[_id].status = _status;
         if (_status == true) {
             Complaints[_id].message = "Under investigation";
         } else {
-            Complaints[_id].message = "Application rejected";
+            Complaints[_id].message = _msg;
         }
     }
 
@@ -120,56 +177,75 @@ contract ComplaintRegistration {
         Complaints[_id].message = _msg;
     }
 
-    function getCyberCrimeComplaints(uint256 _type)
-        public
-        view
-        returns (string[] memory)
-    {
-        require(isAdmin(msg.sender), "Only admins can execute this function");
+    // function getAllComplaints() public view returns (string[] memory) {
+    //     return idArray;
+    // }
 
-        string[] memory complaintsArray = new string[](idArray.length);
-        uint256 index = 0;
-
-        for (uint256 i = 0; i < idArray.length; i++) {
-            if (Complaints[idArray[i]].complaintType == _type) {
-                complaintsArray[index] = idArray[i];
-                index++;
-            }
-        }
-
-        return complaintsArray;
-    }
-
-    function searchComplaint(string memory _id)
-        public
-        view
-        returns (Complaint memory)
-    {
-        require(isAdmin(msg.sender), "Only admins can execute this function");
-        return Complaints[_id];
-    }
-
-    function viewComplaint(string memory _id)
+    function viewComplaint(
+        string memory _id
+    )
         public
         view
         returns (
             string memory,
+            uint256,
             string memory,
             string memory,
-            string memory,
-            string memory,
-            bool
+            bool,
+            uint256
         )
     {
+        require(
+            msg.sender == Complaints[_id].user,
+            "Only original author can view complaint!"
+        );
         Complaint storage complaint = Complaints[_id];
         return (
-            complaint.id,
-            complaint.name,
-            complaint.title,
+            _id,
+            complaint.complaintType,
             complaint.description,
             complaint.message,
-            complaint.status
+            complaint.status,
+            complaint.timestamp
         );
     }
+
+    function viewComplaints() public view returns (string[] memory) {
+        return UserComplaints[msg.sender];
+    }
+
+    function getDetails(
+        string memory _id
+    ) public view returns (Complaint memory) {
+        require(isAdmin(msg.sender), "Only admins can execute this function");
+        return Complaints[_id];
+    }
+
+    function getComplaints() public view returns (string[] memory) {
+        require(isAdmin(msg.sender), "Only admins can execute this function");
+        uint _type = 0;
+
+        if (msg.sender == superAdmin) {
+            return idArray;
+        } else if (msg.sender == cyberAdmin) {
+            _type = 1;
+        } else if (msg.sender == theftAdmin) {
+            _type = 2;
+        } else if (msg.sender == drugAdmin) {
+            _type = 3;
+        } else if (msg.sender == othersAdmin) {
+            _type = 4;
+        }
+        string[] memory arr = new string[](idArray.length);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < idArray.length; i++) {
+            if (Complaints[idArray[i]].complaintType == _type) {
+                arr[index] = idArray[i];
+                index++;
+            }
+        }
+
+        return arr;
+    }
 }
-lhkcwk6z

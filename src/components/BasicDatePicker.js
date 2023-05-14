@@ -6,14 +6,14 @@ import { DateField } from '@mui/x-date-pickers/DateField';
 
 export default function BasicDatePicker({ onChange, value, disabled }) {
   const handleChange = (e) => {
-    onChange(e.$D+"/"+(e.$M+1)+"/"+e.$y);
+    onChange(e.$y+"-"+(e.$M+1)+"-"+e.$D);
   };
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DemoContainer components={["DatePicker"]}>
         <DateField
           sx={{ width: "223px" }}
-          format="DD-MM-YYYY"
+          format="YYYY-MM-DD"
           label="DOB"
           value={value}
           disabled={disabled}

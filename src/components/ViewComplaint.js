@@ -4,10 +4,11 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import { Divider, Stack } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { viewComplaint } from "../functions/ContractInteractions";
+import dayjs from "dayjs";
 
-const ViewComplaints = ({ expanded, handleChange, id }) => {
+const ViewComplaint = ({ id }) => {
   const [details, setDetails] = useState([]);
 
   const handleClick = () => {
@@ -27,33 +28,45 @@ const ViewComplaints = ({ expanded, handleChange, id }) => {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography>{details[2]}</Typography>
-        <Typography textAlign={"left"}>Complaint description: </Typography>
-        <Typography>{details[3]}</Typography>
+        <Typography sx={{textAlign: "left"}}>
+          Complaint title: {parseInt(details[1]) === 1
+            ? "Cyber Crime"
+            : parseInt(details[1]) === 2
+            ? "Theft"
+            : parseInt(details[1]) === 3
+            ? "Drug"
+            : parseInt(details[1]) === 4
+            ? "Others"
+            : null}
+        </Typography>
+        <Typography textAlign={"left"}>Complaint description: {details[2]} </Typography>
         <Divider sx={{ mt: 2 }} />
         <Stack
           direction={"row"}
           justifyContent={"space-between"}
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, mb: 2 }}
         >
           <Typography>
             Application Status:
             <br />
-            {details[5]
+            {details[4]
               ? "Accepted"
-              : !details[4]
+              : !details[3]
               ? "Under Verification"
               : "Rejected"}
           </Typography>
           <Typography>
             Updates:
             <br />
-            {details[4]}
+            {details[3]}
           </Typography>
+          
         </Stack>
+        <Divider/>
+        <Typography sx={{mt:2}}>Updated on: {String(dayjs.unix(parseInt(details[5])))}</Typography>
       </AccordionDetails>
     </Accordion>
   );
 };
 
-export default ViewComplaints;
+export default ViewComplaint;

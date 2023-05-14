@@ -2,6 +2,24 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "admin",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "accType",
+				"type": "uint256"
+			}
+		],
+		"name": "addAdmin",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "_id",
 				"type": "string"
@@ -17,23 +35,23 @@
 				"type": "string"
 			},
 			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			},
+			{
 				"internalType": "uint256",
 				"name": "_phone",
 				"type": "uint256"
 			},
 			{
-				"internalType": "string",
+				"internalType": "uint256",
 				"name": "_dob",
-				"type": "string"
+				"type": "uint256"
 			},
 			{
 				"internalType": "string",
 				"name": "_addr",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_title",
 				"type": "string"
 			},
 			{
@@ -65,12 +83,12 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "admin",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "x",
+				"type": "uint256"
 			}
 		],
-		"name": "addCyberCrimeAdmin",
+		"name": "setThreshold",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -78,38 +96,22 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "admin",
-				"type": "address"
-			}
-		],
-		"name": "addDrugAdmin",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+				"internalType": "string",
+				"name": "_id",
+				"type": "string"
+			},
 			{
-				"internalType": "address",
-				"name": "admin",
-				"type": "address"
-			}
-		],
-		"name": "addOtherAdmin",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
+				"internalType": "string",
+				"name": "_msg",
+				"type": "string"
+			},
 			{
-				"internalType": "address",
-				"name": "admin",
-				"type": "address"
+				"internalType": "bool",
+				"name": "_status",
+				"type": "bool"
 			}
 		],
-		"name": "addTheftAdmin",
+		"name": "superAdminAction",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -148,6 +150,11 @@
 				"internalType": "bool",
 				"name": "_status",
 				"type": "bool"
+			},
+			{
+				"internalType": "string",
+				"name": "_msg",
+				"type": "string"
 			}
 		],
 		"name": "validateComplaint",
@@ -157,26 +164,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "checkComplaintStatus",
-		"outputs": [
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_type",
-				"type": "uint256"
-			}
-		],
-		"name": "getCyberCrimeComplaints",
+		"name": "getComplaints",
 		"outputs": [
 			{
 				"internalType": "string[]",
@@ -195,14 +183,14 @@
 				"type": "string"
 			}
 		],
-		"name": "searchComplaint",
+		"name": "getDetails",
 		"outputs": [
 			{
 				"components": [
 					{
-						"internalType": "string",
-						"name": "id",
-						"type": "string"
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
 					},
 					{
 						"internalType": "uint256",
@@ -215,23 +203,23 @@
 						"type": "string"
 					},
 					{
+						"internalType": "string",
+						"name": "email",
+						"type": "string"
+					},
+					{
 						"internalType": "uint256",
 						"name": "phone",
 						"type": "uint256"
 					},
 					{
-						"internalType": "string",
+						"internalType": "uint256",
 						"name": "dob",
-						"type": "string"
+						"type": "uint256"
 					},
 					{
 						"internalType": "string",
 						"name": "addr",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "title",
 						"type": "string"
 					},
 					{
@@ -260,6 +248,11 @@
 						"type": "string"
 					},
 					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					},
+					{
 						"internalType": "bool",
 						"name": "status",
 						"type": "bool"
@@ -268,6 +261,19 @@
 				"internalType": "struct ComplaintRegistration.Complaint",
 				"name": "",
 				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getExpiredComplaints",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
 			}
 		],
 		"stateMutability": "view",
@@ -289,14 +295,9 @@
 				"type": "string"
 			},
 			{
-				"internalType": "string",
+				"internalType": "uint256",
 				"name": "",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
+				"type": "uint256"
 			},
 			{
 				"internalType": "string",
@@ -312,6 +313,24 @@
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "viewComplaints",
+		"outputs": [
+			{
+				"internalType": "string[]",
+				"name": "",
+				"type": "string[]"
 			}
 		],
 		"stateMutability": "view",

@@ -6,18 +6,18 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Data from "../data/DrawerButtons";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 
-export default function MuiDrawer({open, toggleDrawer}) {
+export default function MuiDrawer({ open, toggleDrawer, wallet, setWallet }) {
   const navigate = useNavigate();
 
   const handleClick = (link) => {
     navigate(link);
-  }
+  };
 
   return (
     <div>
-      {/* <Button onClick={() => toggleDrawer(true)}>open</Button> */}
       <Drawer open={open} onClose={() => toggleDrawer(false)}>
         <Box
           sx={{ width: 250 }}
@@ -29,13 +29,21 @@ export default function MuiDrawer({open, toggleDrawer}) {
             {Data.map((data, index) => (
               <ListItem key={index} disablePadding>
                 <ListItemButton onClick={() => handleClick(data.link)}>
-                  <ListItemIcon>
-                    {data.icon}
-                  </ListItemIcon>
+                  <ListItemIcon>{data.icon}</ListItemIcon>
                   <ListItemText primary={data.text} />
                 </ListItemButton>
               </ListItem>
             ))}
+            {wallet ? (
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => setWallet("")}>
+                  <ListItemIcon>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Disconnect"} />
+                </ListItemButton>
+              </ListItem>
+            ) : null}
           </List>
         </Box>
       </Drawer>

@@ -4,202 +4,161 @@ import Swal from "sweetalert2";
 
 const ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ADDRESS;
 
-const UploadGrievance = async (
-  id,
-  type,
-  name,
-  phone,
-  dob,
-  addr,
-  title,
-  desc,
-  policeStation,
-  proof,
-  attachment,
-  setComplete
-) => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
-  const contract = new ethers.Contract(ADDRESS, ABI, provider);
-  const signer = provider.getSigner();
-  const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .addComplaint(
-      id,
-      type,
-      name,
-      phone,
-      dob,
-      addr,
-      title,
-      desc,
-      policeStation,
-      proof,
-      attachment
-    )
-    .then((res) => {
-      setComplete(true);
-      Swal.fire({
-        title: "Registration Successfull",
-        text: `Txn hash: ${res.hash}`,
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
-    })
-    .catch((err) => {
-      // console.log(err);
-      Swal.fire({
-        title: "Error",
-        text: `An error occured`,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    });
-};
+const ShowMsg = (title, icon, text) => {
+  Swal.fire({
+    title: title,
+    icon: icon,
+    text: text,
+    confirmButtonText: "Ok"
+  })
+}
 
-const getApplicationIds = async (setIds) => {
+const addAdmin = (addr, type) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .checkComplaintStatus()
-    .then((res) => {
-      console.log(res);
-      setIds(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+  daiWithSigner.addAdmin(addr, type).then((res) => {
+    ShowMsg("Admin Added Successfully", "success", `Txn hash: ${res.hash}`)
+  }).catch(() => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
 
-const viewComplaint = async (id, setComplaint) => {
+const setThreshold = (x) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .viewComplaint(id)
-    .then((res) => {
-      setComplaint(res);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+  daiWithSigner.setThreshold(x).then((res) => {
+    ShowMsg("Threshold set Successfully", "success", `Txn hash: ${res.hash}`)
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
 
-const addCyberAdmin = async (addr, flag) => {
+const addComplaint = (id, type, name, email, phone, dob, addr, desc, policeStation, proof, attachment, setComplete) => {
+  console.log({id, type, name, email, phone, dob, addr, desc, policeStation, proof, attachment});
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .addCyberCrimeAdmin(addr)
-    .then((res) => {
-      Swal.fire({
-        title: "Admin added Successfully",
-        text: `Txn hash: ${res.hash}`,
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: `An error occured`,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    });
-};
+  daiWithSigner.addComplaint(id, type, name, email, phone, dob, addr, desc, policeStation, proof, attachment).then((res) => {
+    ShowMsg("Complaint registered Successfully", "success", `Txn hash: ${res.hash}`)
+    setComplete(true);
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
 
-const addTheftAdmin = async (addr) => {
+const getExpiredComplaints = () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .addTheftAdmin(addr)
-    .then((res) => {
-      Swal.fire({
-        title: "Admin added Successfully",
-        text: `Txn hash: ${res.hash}`,
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: `An error occured`,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    });
-};
+  daiWithSigner.getExpiredComplaints().then((res) => {
+    console.log(res);
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
 
-const addDrugAdmin = async (addr) => {
+const superAdminAction = (id, msg, status) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .addDrugAdmin(addr)
-    .then((res) => {
-      Swal.fire({
-        title: "Admin added Successfully",
-        text: `Txn hash: ${res.hash}`,
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: `An error occured`,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    });
-};
+  daiWithSigner.superAdminAction(id, msg, status).then((res) => {
+    ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`)
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
 
-const addOthersAdmin = async (addr) => {
+const validateComplaint = (id, status, msg) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  await provider.send("eth_requestAccounts", []);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
-  daiWithSigner
-    .addOtherAdmin(addr)
-    .then((res) => {
-      Swal.fire({
-        title: "Admin added Successfully",
-        text: `Txn hash: ${res.hash}`,
-        icon: "success",
-        confirmButtonText: "Ok",
-      });
-    })
-    .catch((err) => {
-      Swal.fire({
-        title: "Error",
-        text: `An error occured`,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    });
-};
+  daiWithSigner.validateComplaint(id, status, msg).then((res) => {
+    ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`)
+  }).catch(() => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
+
+const updateMessage = (id, msg) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(ADDRESS, ABI, provider);
+  const signer = provider.getSigner();
+  const daiWithSigner = contract.connect(signer);
+  daiWithSigner.updateMessage(id, msg).then((res) => {
+    ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`)
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
+
+const viewComplaint = (id, setDetails) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(ADDRESS, ABI, provider);
+  const signer = provider.getSigner();
+  const daiWithSigner = contract.connect(signer);
+  daiWithSigner.viewComplaint(id).then((res) => {
+    setDetails(res)
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
+
+const viewComplaints = (setIds) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(ADDRESS, ABI, provider);
+  const signer = provider.getSigner();
+  const daiWithSigner = contract.connect(signer);
+  daiWithSigner.viewComplaints().then((res) => {
+    setIds(res);
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
+
+const getDetails = (id, setData) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(ADDRESS, ABI, provider);
+  const signer = provider.getSigner();
+  const daiWithSigner = contract.connect(signer);
+  daiWithSigner.getDetails(id).then((res) => {
+    console.log(res)
+    setData(res)
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
+
+const getComplaints = (setIds) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(ADDRESS, ABI, provider);
+  const signer = provider.getSigner();
+  const daiWithSigner = contract.connect(signer);
+  daiWithSigner.getComplaints().then((res) => {
+    console.log(res)
+    setIds(res);
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
 
 export {
-  UploadGrievance,
-  getApplicationIds,
+  addAdmin,
+  setThreshold, 
+  addComplaint, 
+  getExpiredComplaints, 
+  superAdminAction, 
+  validateComplaint, 
+  updateMessage, 
   viewComplaint,
-  addCyberAdmin,
-  addTheftAdmin,
-  addDrugAdmin,
-  addOthersAdmin,
+  viewComplaints,
+  getDetails,
+  getComplaints
 };

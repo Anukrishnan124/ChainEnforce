@@ -1,30 +1,28 @@
-import {
-  addCyberAdmin,
-  addTheftAdmin,
-  addDrugAdmin,
-  addOthersAdmin,
-} from "../../functions/ContractInteractions";
-
 const Data = {
+  "add-super-admin": {
+    title: "Add Super Admin",
+    label: "Super Admin Address",
+    type: 1
+  },
   "add-cybercrime-admin": {
     title: "Add Cyber Crime Admin",
-    label: "Address",
-    onChange: addCyberAdmin,
+    label: "Cyber Crime Admin Address",
+    type: 2
   },
   "add-theft-admin": {
     title: "Add Theft Admin",
-    label: "Address",
-    onChange: addTheftAdmin,
+    label: "Theft Admin Address",
+    type: 3
   },
   "add-drug-admin": {
     title: "Add Drug Admin",
-    label: "Address",
-    onChange: addDrugAdmin,
+    label: "Drug Admin Address",
+    type: 4
   },
   "add-others-admin": {
     title: "Add Others Admin",
-    label: "Address",
-    onChange: addOthersAdmin,
+    label: "Others Admin Address",
+    type: 5
   },
 };
 

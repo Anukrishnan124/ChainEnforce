@@ -2,6 +2,11 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
 const Data = [
   {
+    text: "Add Super Admin",
+    icon: <PersonAddAlt1Icon />,
+    link: "/owner-dashboard/add-super-admin"
+  },
+  {
     text: "Add Cyber Crime Admin",
     icon: <PersonAddAlt1Icon />,
     link: "/owner-dashboard/add-cybercrime-admin"

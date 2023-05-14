@@ -1,15 +1,20 @@
-import { Stack, Button, Typography, Accordion } from "@mui/material";
-import { useState } from "react";
-import { getApplicationIds } from "../functions/ContractInteractions";
+import { Stack, Button, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { viewComplaints } from "../functions/ContractInteractions";
+import ConnectWallet from "../functions/ConnectWallet";
+import ViewComplaint from "../components/ViewComplaint";
 
-import ViewComplaints from "../components/ViewComplaint";
-
-const ViewStatus = () => {
+const ViewStatus = ({ wallet, setWallet }) => {
   const [ids, setIds] = useState("");
 
+  useEffect(() => {
+    if (wallet) {
+      viewComplaints(setIds);
+    }
+  }, [wallet]);
   return (
     <>
-      {!ids ? (
+      {!wallet ? (
         <Stack
           sx={{
             backgroundColor: "white",
@@ -22,17 +27,17 @@ const ViewStatus = () => {
           alignItems={"center"}
           justifyContent={"center"}
         >
-          <Button variant="contained" onClick={() => getApplicationIds(setIds)}>
+          <Button variant="contained" onClick={() => ConnectWallet(setWallet)}>
             Connect Wallet
           </Button>
         </Stack>
       ) : null}
-      {ids ? (
+      {wallet && ids ? (
         <Stack sx={{ mt: 5 }}>
           <Typography>Your Complaints</Typography>
           <Stack sx={{ width: "70vw", mx: "auto", mt: 2 }}>
             {ids.map((data, index) => (
-              <ViewComplaints key={index} id={data} />
+              <ViewComplaint key={index} id={data} />
             ))}
           </Stack>
         </Stack>

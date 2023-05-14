@@ -82,8 +82,8 @@ const CustomInput = ({
             <Select label={label} onChange={handleChange} value={value} disabled={disabled}>
               {array
                 ? array.map((data, index) => (
-                    <MenuItem key={index} value={data}>
-                      {data}
+                    <MenuItem key={index} value={data.id}>
+                      {data.text}
                     </MenuItem>
                   ))
                 : null}
@@ -92,8 +92,8 @@ const CustomInput = ({
         </Box>
       ) : null}
       {isFile ? (
-        <Stack direction={"column"}>
-          <Button variant="outlined" component="label" sx={{ width: "223px" }} disabled={disabled}>
+        <Stack direction={"column"} sx={{width: "223px"}}>
+          <Button variant="outlined" component="label" sx={{ width: "100%" }} disabled={disabled}>
             Upload
             <input
               hidden
@@ -103,7 +103,7 @@ const CustomInput = ({
               onChange={handleFiles}
             />
           </Button>
-          {value ? <Typography variant="caption">{value}</Typography> : null}
+          {value ? <Typography  variant="caption">{value}</Typography> : null}
           
         </Stack>
       ) : null}

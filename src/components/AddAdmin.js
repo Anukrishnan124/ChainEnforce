@@ -2,6 +2,7 @@ import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Data from "../data/Owner/OwnerPageData";
+import { addAdmin } from "../functions/ContractInteractions";
 
 const AddAdmin = () => {
   const [addr, setAddr] = useState("");
@@ -33,7 +34,7 @@ const AddAdmin = () => {
               setAddr(e.target.value);
             }}
           ></TextField>
-          <Button variant="contained" sx={{ width: 150 }} onClick={() => data.onChange(addr)}>
+          <Button variant="contained" sx={{ width: 150 }} onClick={() => addAdmin(addr, data.type)}>
             Submit
           </Button>
         </Stack>
