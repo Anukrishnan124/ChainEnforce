@@ -12,6 +12,7 @@ const ViewStatus = ({ wallet, setWallet }) => {
       viewComplaints(setIds);
     }
   }, [wallet]);
+  
   return (
     <>
       {!wallet ? (

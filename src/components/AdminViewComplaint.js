@@ -2,7 +2,6 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Box,
   Button,
   Stack,
   Typography,
@@ -16,9 +15,12 @@ import TableRow from "@mui/material/TableRow";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import Paper from "@mui/material/Paper";
+// import Paper from "@mui/material/Paper";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ImageViewer from "react-simple-image-viewer";
+import UpdateMsg from "./UpdateMsg";
+import ResolveBtn from "./ResolveBtn";
+import AcceptReject from "./AcceptRejectBtn";
 
 const AdminViewComplaint = ({ id }) => {
   const [data, setData] = useState("");
@@ -37,10 +39,14 @@ const AdminViewComplaint = ({ id }) => {
     if (!data) getDetails(id, setData);
   };
 
+  const handleReload = () => {
+    getDetails(id, setData);
+  };
+
   function createData(title, value) {
     return { title, value };
   }
-
+  console.log(data[14])
   useEffect(() => {
     if (data) {
       setRows([
@@ -85,6 +91,14 @@ const AdminViewComplaint = ({ id }) => {
           </Button>
         ),
         createData("Updates", data[11]),
+        createData(
+          "Accepted",
+          data[13] == 1
+            ? "Accepted"
+            : data[13] == 2
+            ? "Rejected"
+            : "Under Verification"
+        ),
         createData("Updated on", String(dayjs.unix(parseInt(data[12])))),
       ]);
     }
@@ -101,31 +115,52 @@ const AdminViewComplaint = ({ id }) => {
             <Typography>Application id: {id}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <TableContainer component={Paper} elevation={3}>
-              <Table
-                sx={{ minWidth: 650, backgroundColor: "#FEFEFE" }}
-                aria-label="simple table"
-              >
-                <TableBody>
-                  {rows
-                    ? rows.map((data, index) => (
-                        <TableRow key={index} sx={{ width: "100%" }}>
-                          <TableCell sx={{ width: "30%" }}>
-                            {data.title}
-                          </TableCell>
-                          <TableCell sx={{ width: "30%" }}>
-                            {data.value}
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    : null}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            <Stack direction={"row"} sx={{mt: 2}} justifyContent={"space-evenly"}>
-              <Button variant="outlined" sx={{minWidth: 150}}>Update Progess</Button>
-              <Button variant="outlined" sx={{width: 150}}>Resolve</Button>
-            </Stack>
+            {data[2] !== "" ? (
+              <>
+                <TableContainer>
+                  <Table
+                    sx={{ minWidth: 650, backgroundColor: "#FEFEFE" }}
+                    aria-label="simple table"
+                  >
+                    <TableBody>
+                      {rows
+                        ? rows.map((data, index) => (
+                            <TableRow key={index} sx={{ width: "100%" }}>
+                              <TableCell sx={{ width: "30%" }}>
+                                {data.title}
+                              </TableCell>
+                              <TableCell sx={{ width: "30%" }}>
+                                {data.value}
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        : null}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                
+                          
+                <Stack
+                  direction={"row"}
+                  sx={{ mt: 2 }}
+                  justifyContent={"space-evenly"}
+                >
+                  {data[13] == 0 ? (
+                    <AcceptReject id={id} />
+                  ) : !data[14] ? (
+                    <>
+                      <Button variant="outlined" onClick={handleReload}>
+                        Reload data
+                      </Button>
+                      <UpdateMsg id={id} />
+                      <ResolveBtn id={id} resolve={true} text={"Resolve"} />
+                    </>
+                  ) : <Typography>Resolved</Typography>}
+                </Stack>
+              </>
+            ) : (
+              <Typography>Invalid application id</Typography>
+            )}
           </AccordionDetails>
         </Accordion>
       ) : null}

@@ -4,16 +4,18 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Typography from "@mui/material/Typography";
 import { Divider, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { viewComplaint } from "../functions/ContractInteractions";
 import dayjs from "dayjs";
 
 const ViewComplaint = ({ id }) => {
-  const [details, setDetails] = useState([]);
+  const [details, setDetails] = useState("");
 
   const handleClick = () => {
-    viewComplaint(id, setDetails);
+    if (!details) viewComplaint(id, setDetails);
   };
+
+  console.log(details);
 
   return (
     <Accordion>
@@ -28,18 +30,21 @@ const ViewComplaint = ({ id }) => {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography sx={{textAlign: "left"}}>
-          Complaint title: {parseInt(details[1]) === 1
+        <Typography sx={{ textAlign: "left" }}>
+          Complaint title:{" "}
+          {parseInt(details[0]) === 1
             ? "Cyber Crime"
-            : parseInt(details[1]) === 2
+            : parseInt(details[0]) === 2
             ? "Theft"
-            : parseInt(details[1]) === 3
+            : parseInt(details[0]) === 3
             ? "Drug"
-            : parseInt(details[1]) === 4
+            : parseInt(details[0]) === 4
             ? "Others"
             : null}
         </Typography>
-        <Typography textAlign={"left"}>Complaint description: {details[2]} </Typography>
+        <Typography textAlign={"left"}>
+          Complaint description: {details[1]}{" "}
+        </Typography>
         <Divider sx={{ mt: 2 }} />
         <Stack
           direction={"row"}
@@ -49,21 +54,30 @@ const ViewComplaint = ({ id }) => {
           <Typography>
             Application Status:
             <br />
-            {details[4]
+            {details[3] == 1
               ? "Accepted"
-              : !details[3]
+              : details[3] == 0
               ? "Under Verification"
-              : "Rejected"}
+              : details[3] == 2
+              ? "Rejected"
+              : ""}
           </Typography>
           <Typography>
             Updates:
             <br />
-            {details[3]}
+            {details[2]}
           </Typography>
-          
         </Stack>
-        <Divider/>
-        <Typography sx={{mt:2}}>Updated on: {String(dayjs.unix(parseInt(details[5])))}</Typography>
+        <Divider />
+        <Typography sx={{ mt: 2, mb: 2 }}>
+          Updated on: {String(dayjs.unix(parseInt(details[4])))}
+        </Typography>
+        {details[5] ? (
+          <>
+            <Divider />
+            <Typography sx={{mt: 2}}>Resolved</Typography>
+          </>
+        ) : null}
       </AccordionDetails>
     </Accordion>
   );

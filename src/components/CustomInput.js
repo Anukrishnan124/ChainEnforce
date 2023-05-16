@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import BasicDatePicker from "./BasicDatePicker";
-import { handlePhone } from "../functions/Validations";
+import { handleNum } from "../functions/Validations";
 
 const CustomInput = ({
   label,
@@ -58,7 +58,7 @@ const CustomInput = ({
           label={label}
           value={value}
           placeholder={placeholder}
-          onChange={(e) => handlePhone(e.target.value, onChange)}
+          onChange={(e) => handleNum(e.target.value, onChange)}
           disabled={disabled}
         />
       ) : null}

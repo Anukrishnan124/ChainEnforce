@@ -16,9 +16,10 @@ import OwnerPage from "./pages/OwnerPage";
 import AddAdmin from "./components/AddAdmin";
 import Welcome from "./components/AdminWelcome";
 import AdminPage from "./pages/AdminPage";
-import AdminDashboard from "./components/AdminDashboard";
+import SuperAdminPage from "./pages/SuperAdminPage";
 
 const OWNER = process.env.REACT_APP_OWNER_ADDR;
+const SUPER = process.env.REACT_APP_SUPER_ADDR;
 const CYBER_ADMIN = process.env.REACT_APP_CYBER_ADDR;
 const THEFT_ADMIN = process.env.REACT_APP_THEFT_ADDR;
 const DRUG_ADMIN = process.env.REACT_APP_DRUG_ADDR;
@@ -41,6 +42,12 @@ function App() {
                 <Navigate to={"/cybercrime-admin-dashboard"} replace />
               ) : wallet === THEFT_ADMIN ? (
                 <Navigate to={"/theft-admin-dashboard"} replace />
+              ) : wallet === DRUG_ADMIN ? (
+                <Navigate to={"/drug-admin-dashboard"} replace />
+              ) : wallet === OTHER_ADMIN ? (
+                <Navigate to={"/others-admin-dashboard"} replace />
+              ) : wallet === SUPER ? (
+                <Navigate to={"/super-admin-dashboard"} replace />
               ) : (
                 <LoginPage wallet={wallet} setWallet={setWallet} />
               )
@@ -92,6 +99,32 @@ function App() {
               ) : (
                 <Navigate to={"/login"} replace />
               )
+            }
+          />
+          <Route
+            path="/drug-admin-dashboard"
+            element={
+              wallet ? (
+                <AdminPage wallet={wallet} />
+              ) : (
+                <Navigate to={"/login"} replace />
+              )
+            }
+          />
+          <Route
+            path="/others-admin-dashboard"
+            element={
+              wallet ? (
+                <AdminPage wallet={wallet} />
+              ) : (
+                <Navigate to={"/login"} replace />
+              )
+            }
+          />
+          <Route
+            path="/super-admin-dashboard"
+            element={
+              wallet ? <SuperAdminPage wallet={wallet} /> : <Navigate to={"/login"} replace />
             }
           />
           <Route path="*" element={<Navigate to={"/"} replace />} />

@@ -26,7 +26,8 @@ contract ComplaintRegistration {
         string attachment;
         string message;
         uint256 timestamp;
-        bool status;
+        uint status; // 1 - accepted, 2 - rejected, 0 - under verification
+        bool resolved; // true - case closed
     }
 
     mapping(string => Complaint) Complaints;
@@ -109,6 +110,7 @@ contract ComplaintRegistration {
             _attachment,
             _msg,
             block.timestamp,
+            0,
             false
         );
         UserComplaints[msg.sender].push(_id);
@@ -121,78 +123,60 @@ contract ComplaintRegistration {
         onlySuperAdmin
         returns (string[] memory)
     {
-        // require(
-        //     msg.sender == superAdmin,
-        //     "Only super admin can execute this function"
-        // );
-
         string[] memory arr = new string[](idArray.length);
         uint256 index = 0;
 
         for (uint256 i = 0; i < idArray.length; i++) {
             if (
                 block.timestamp >
-                Complaints[idArray[i]].timestamp + threshold * 1 days
+                Complaints[idArray[i]].timestamp + threshold * 1 days &&
+                Complaints[idArray[i]].resolved == false
             ) {
                 arr[index] = idArray[i];
                 index++;
             }
         }
-
         return arr;
-    }
-
-    function superAdminAction(
-        string memory _id,
-        string memory _msg,
-        bool _status
-    ) public onlySuperAdmin {
-        require(
-            msg.sender == superAdmin,
-            "Only super admin can execute this function"
-        );
-
-        Complaint storage complaint = Complaints[_id];
-        complaint.message = _msg;
-        complaint.status = _status;
-        complaint.timestamp = block.timestamp;
     }
 
     function validateComplaint(
         string memory _id,
-        bool _status,
+        uint _status,
         string memory _msg
     ) public {
         require(isAdmin(msg.sender), "Only admins can execute this function");
         Complaints[_id].status = _status;
-        if (_status == true) {
+        if (_status == 1) {
             Complaints[_id].message = "Under investigation";
-        } else {
+        } else if(_status == 2) {
             Complaints[_id].message = _msg;
+            Complaints[_id].resolved = true;
         }
+        Complaints[_id].timestamp = block.timestamp;
     }
 
     function updateMessage(string memory _id, string memory _msg) public {
         require(isAdmin(msg.sender), "Only admins can execute this function");
         Complaints[_id].message = _msg;
+        Complaints[_id].timestamp = block.timestamp;
     }
 
-    // function getAllComplaints() public view returns (string[] memory) {
-    //     return idArray;
-    // }
+    function resolveComplaint(string memory _id, bool resolve) public {
+        require(isAdmin(msg.sender), "Only admins can execute this function");
+        Complaints[_id].resolved = resolve;
+        Complaints[_id].timestamp = block.timestamp;
+    }
 
-    function viewComplaint(
-        string memory _id
-    )
+    function viewComplaint(string memory _id)
         public
         view
         returns (
-            string memory,
             uint256,
             string memory,
             string memory,
-            bool,
-            uint256
+            uint,
+            uint256,
+            bool
         )
     {
         require(
@@ -201,12 +185,12 @@ contract ComplaintRegistration {
         );
         Complaint storage complaint = Complaints[_id];
         return (
-            _id,
             complaint.complaintType,
             complaint.description,
             complaint.message,
             complaint.status,
-            complaint.timestamp
+            complaint.timestamp,
+            complaint.resolved
         );
     }
 
@@ -214,19 +198,32 @@ contract ComplaintRegistration {
         return UserComplaints[msg.sender];
     }
 
-    function getDetails(
-        string memory _id
-    ) public view returns (Complaint memory) {
+    function getDetails(string memory _id)
+        public
+        view
+        returns (Complaint memory)
+    {
         require(isAdmin(msg.sender), "Only admins can execute this function");
         return Complaints[_id];
     }
 
     function getComplaints() public view returns (string[] memory) {
         require(isAdmin(msg.sender), "Only admins can execute this function");
-        uint _type = 0;
+        uint256 _type = 0;
+
+        string[] memory arr = new string[](idArray.length);
+        uint256 index = 0;
 
         if (msg.sender == superAdmin) {
-            return idArray;
+            // return idArray;
+            for (uint256 i = 0; i < idArray.length; i++) {
+                if (Complaints[idArray[i]].resolved == false) {
+                    arr[index] = idArray[i];
+                    index++;
+                }
+            }
+
+            return arr;
         } else if (msg.sender == cyberAdmin) {
             _type = 1;
         } else if (msg.sender == theftAdmin) {
@@ -236,11 +233,12 @@ contract ComplaintRegistration {
         } else if (msg.sender == othersAdmin) {
             _type = 4;
         }
-        string[] memory arr = new string[](idArray.length);
-        uint256 index = 0;
 
         for (uint256 i = 0; i < idArray.length; i++) {
-            if (Complaints[idArray[i]].complaintType == _type) {
+            if (
+                Complaints[idArray[i]].complaintType == _type &&
+                Complaints[idArray[i]].resolved == false 
+            ) {
                 arr[index] = idArray[i];
                 index++;
             }

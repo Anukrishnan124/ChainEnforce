@@ -51,51 +51,43 @@ const addComplaint = (id, type, name, email, phone, dob, addr, desc, policeStati
   })
 }
 
-const getExpiredComplaints = () => {
+const getExpiredComplaints = (setIds) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
   daiWithSigner.getExpiredComplaints().then((res) => {
+    setIds(res);
     console.log(res);
   }).catch((err) => {
     ShowMsg("Error", "error", `Some error occured`)
   })
 }
 
-const superAdminAction = (id, msg, status) => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const contract = new ethers.Contract(ADDRESS, ABI, provider);
-  const signer = provider.getSigner();
-  const daiWithSigner = contract.connect(signer);
-  daiWithSigner.superAdminAction(id, msg, status).then((res) => {
-    ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`)
-  }).catch((err) => {
-    ShowMsg("Error", "error", `Some error occured`)
-  })
-}
-
-const validateComplaint = (id, status, msg) => {
+const validateComplaint = (id, status, msg, setOpen) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
   daiWithSigner.validateComplaint(id, status, msg).then((res) => {
+    setOpen(false);
     ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`)
   }).catch(() => {
     ShowMsg("Error", "error", `Some error occured`)
   })
 }
 
-const updateMessage = (id, msg) => {
+const updateMessage = (id, msg, setOpen) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
   daiWithSigner.updateMessage(id, msg).then((res) => {
-    ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`)
+    ShowMsg("Complaint updated Successfully", "success", `Txn hash: ${res.hash}`);
+    setOpen(false);
   }).catch((err) => {
     ShowMsg("Error", "error", `Some error occured`)
+    setOpen(false);
   })
 }
 
@@ -106,6 +98,7 @@ const viewComplaint = (id, setDetails) => {
   const daiWithSigner = contract.connect(signer);
   daiWithSigner.viewComplaint(id).then((res) => {
     setDetails(res)
+    console.log(res);
   }).catch((err) => {
     ShowMsg("Error", "error", `Some error occured`)
   })
@@ -117,6 +110,7 @@ const viewComplaints = (setIds) => {
   const signer = provider.getSigner();
   const daiWithSigner = contract.connect(signer);
   daiWithSigner.viewComplaints().then((res) => {
+    console.log(res);
     setIds(res);
   }).catch((err) => {
     ShowMsg("Error", "error", `Some error occured`)
@@ -149,16 +143,28 @@ const getComplaints = (setIds) => {
   })
 }
 
+const resolveComplaint = (id, resolve) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(ADDRESS, ABI, provider);
+  const signer = provider.getSigner();
+  const daiWithSigner = contract.connect(signer);
+  daiWithSigner.resolveComplaint(id, resolve).then((res) => {
+    ShowMsg("Complaint resolved Successfully", "success", `Txn hash: ${res.hash}`);
+  }).catch((err) => {
+    ShowMsg("Error", "error", `Some error occured`)
+  })
+}
+
 export {
   addAdmin,
   setThreshold, 
   addComplaint, 
-  getExpiredComplaints, 
-  superAdminAction, 
+  getExpiredComplaints,  
   validateComplaint, 
   updateMessage, 
   viewComplaint,
   viewComplaints,
   getDetails,
-  getComplaints
+  getComplaints,
+  resolveComplaint
 };
