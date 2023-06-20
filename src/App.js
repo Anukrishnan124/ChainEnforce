@@ -6,7 +6,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useState } from "react";
-
 import Appbar from "./components/Appbar";
 import LoginPage from "./pages/LoginPage";
 import Home from "./pages/Home";

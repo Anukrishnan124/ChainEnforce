@@ -13,6 +13,7 @@ const ShowMsg = (title, icon, text) => {
   })
 }
 
+// to add admin by owner in owner dashboard
 const addAdmin = (addr, type) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(ADDRESS, ABI, provider);
@@ -24,6 +25,7 @@ const addAdmin = (addr, type) => {
     ShowMsg("Error", "error", `Some error occured`)
   })
 }
+
 
 const setThreshold = (x) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum);
